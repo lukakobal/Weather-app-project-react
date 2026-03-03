@@ -6,16 +6,12 @@
 }
 
 /* BACKGROUND */
-body {
-  min-height: 100vh;
-  background-image: url("/background.jpg"); /* slika v public */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-
+.body {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
 }
 
 /* MAIN WRAPPER */
@@ -90,3 +86,4 @@ body {
 p {
   margin-top: 15px;
 }
+
