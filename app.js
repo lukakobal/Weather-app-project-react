@@ -5,32 +5,47 @@ export default function App() {
   const [weather, setWeather] = useState(null);
   const [city, setCity] = useState("");
   const [loading, setLoading] = useState(false);
+  const [forecast, setForecast] = useState([]);
 
   const apiKey = "fd8b1243efc032340274d0cf59047909";
 
   const fetchWeather = async () => {
     if (city === "") {
       alert("Please enter a city name");
-      setLoading(false);
       return;
     }
 
     setLoading(true);
 
     try {
-      const response = await fetch(
+      // CURRENT WEATHER
+      const weatherResponse = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
       );
 
-      const data = await response.json();
+      const weatherData = await weatherResponse.json();
 
-      if (data.cod !== 200) {
+      if (weatherData.cod !== 200) {
         alert("City not found");
         setLoading(false);
         return;
       }
 
-      setWeather(data);
+      setWeather(weatherData);
+
+      // ✅ FORECAST FETCH
+      const forecastResponse = await fetch(
+        `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`
+      );
+
+      const forecastData = await forecastResponse.json();
+
+      const dailyData = forecastData.list.filter((item) =>
+        item.dt_txt.includes("12:00:00")
+      );
+
+      setForecast(dailyData);
+
       setCity("");
     } catch (error) {
       console.error(error);
@@ -89,6 +104,15 @@ export default function App() {
             <p>Wind: {Math.round(weather.wind.speed * 3.6)} km/h</p>
           </div>
         )}
+        <div className="forecast">
+          {forecast.map((day) => (
+            <div key={day.dt} className="forecast-card">
+              <p> {new Date(day.dt_txt).toLocaleDateString("sl-SI")}</p>
+              <p>{Math.round(day.main.temp)}°C</p>
+              <p>{day.weather[0].main}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
